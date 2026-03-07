@@ -29,13 +29,6 @@ scrape_configs:
         labels:
           server: 'fastapi'
 
-  # Stream(RabbitMQ) 서버 시스템 메트릭
-  - job_name: 'node_stream'
-    static_configs:
-      - targets: ['{{ hostvars["stream-server"]["ansible_host"] }}:9100']
-        labels:
-          server: 'stream'
-
   # Spring Boot 애플리케이션 메트릭 (actuator/prometheus 노출 필요)
   - job_name: 'app_springboot'
     metrics_path: '/actuator/prometheus'

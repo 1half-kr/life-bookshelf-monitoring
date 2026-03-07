@@ -18,8 +18,7 @@ jobs:
           echo "${{ secrets.MONITORING_SSH_KEY }}" > ~/.ssh/monitoring_key
           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/server_key
           echo "${{ secrets.AI_SSH_KEY }}" > ~/.ssh/ai_key
-          echo "${{ secrets.STREAM_SSH_KEY }}" > ~/.ssh/stream_key
-          chmod 600 ~/.ssh/monitoring_key ~/.ssh/server_key ~/.ssh/ai_key ~/.ssh/stream_key
+          chmod 600 ~/.ssh/monitoring_key ~/.ssh/server_key ~/.ssh/ai_key
 
       # IP/키 경로를 Secrets에서 읽어 inventory 동적 생성
       - name: Generate inventory from secrets
@@ -27,11 +26,9 @@ jobs:
           MONITORING_HOST: ${{ secrets.MONITORING_HOST }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           AI_HOST: ${{ secrets.AI_HOST }}
-          STREAM_HOST: ${{ secrets.STREAM_HOST }}
           MONITORING_SSH_KEY_PATH: ~/.ssh/monitoring_key
           SERVER_SSH_KEY_PATH: ~/.ssh/server_key
           AI_SSH_KEY_PATH: ~/.ssh/ai_key
-          STREAM_SSH_KEY_PATH: ~/.ssh/stream_key
         run: envsubst < inventory/hosts.yml.template > inventory/hosts.yml
 
       - name: Install Ansible
