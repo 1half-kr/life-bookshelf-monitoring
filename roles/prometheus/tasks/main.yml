@@ -3,3 +3,4 @@
   template:
     src: prometheus.yml.j2
     dest: /opt/monitoring/prometheus.yml
+  notify: Restart Prometheus
