@@ -42,6 +42,21 @@ services:
     volumes:
       - '/:/host:ro,rslave'
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    restart: always
+    privileged: true
+    ports:
+      - "9080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+
   # 모니터링 서버 자신의 로그를 Loki로 수집
   alloy:
     image: grafana/alloy:latest

@@ -29,6 +29,27 @@ scrape_configs:
         labels:
           server: 'fastapi'
 
+  # 모니터링 서버 컨테이너 메트릭 (같은 docker network → 컨테이너명으로 접근)
+  - job_name: 'cadvisor_monitoring'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          server: 'monitoring'
+
+  # Spring Boot 서버 컨테이너 메트릭
+  - job_name: 'cadvisor_springboot'
+    static_configs:
+      - targets: ['{{ hostvars["springboot-server"]["ansible_host"] }}:9080']
+        labels:
+          server: 'springboot'
+
+  # FastAPI 서버 컨테이너 메트릭
+  - job_name: 'cadvisor_fastapi'
+    static_configs:
+      - targets: ['{{ hostvars["fastapi-server"]["ansible_host"] }}:9080']
+        labels:
+          server: 'fastapi'
+
   # Spring Boot 애플리케이션 메트릭 (actuator/prometheus 노출 필요)
   - job_name: 'app_springboot'
     metrics_path: '/actuator/prometheus'

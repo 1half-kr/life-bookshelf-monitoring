@@ -8,6 +8,21 @@ services:
       - /var/log:/var/log:ro
     command: run --server.http.listen-addr=0.0.0.0:12345 /etc/alloy/config.alloy
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    restart: always
+    privileged: true
+    ports:
+      - "9080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+
   node_exporter:
     image: prom/node-exporter:latest
     restart: always
