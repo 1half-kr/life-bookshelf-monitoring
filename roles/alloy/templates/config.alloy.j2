@@ -22,6 +22,11 @@ discovery.relabel "docker_containers" {
     replacement  = "{{ inventory_hostname }}"
     target_label = "server"
   }
+
+  rule {
+    replacement  = "{{ service_type }}"
+    target_label = "service"
+  }
 }
 
 // Docker 컨테이너 로그 수집

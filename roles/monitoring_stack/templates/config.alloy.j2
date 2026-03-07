@@ -16,6 +16,16 @@ discovery.relabel "docker_containers" {
     source_labels = ["__meta_docker_container_log_stream"]
     target_label  = "stream"
   }
+
+  rule {
+    replacement  = "monitoring"
+    target_label = "server"
+  }
+
+  rule {
+    replacement  = "monitoring"
+    target_label = "service"
+  }
 }
 
 loki.source.docker "containers" {
