@@ -42,6 +42,14 @@ services:
     volumes:
       - '/:/host:ro,rslave'
 
+  blackbox_exporter:
+    image: prom/blackbox-exporter:latest
+    restart: always
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox.yml:/etc/blackbox_exporter/config.yml
+
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     restart: always

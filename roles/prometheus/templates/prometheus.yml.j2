@@ -50,6 +50,23 @@ scrape_configs:
         labels:
           server: 'fastapi'
 
+  # 애플리케이션 헬스 체크 (Blackbox Exporter HTTP probe)
+  - job_name: 'health_check'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - 'http://{{ hostvars["springboot-server"]["ansible_host"] }}:8080/health'
+          - 'http://{{ hostvars["fastapi-server"]["ansible_host"] }}:3000/health'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox_exporter:9115
+
   # Spring Boot 애플리케이션 메트릭 (actuator/prometheus 노출 필요)
   - job_name: 'app_springboot'
     metrics_path: '/actuator/prometheus'
