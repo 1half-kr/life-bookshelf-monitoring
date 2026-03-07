@@ -1,0 +1,47 @@
+// Docker 컨테이너 자동 탐색
+discovery.docker "all_containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// 컨테이너명, 스트림 등 레이블 추가
+discovery.relabel "docker_containers" {
+  targets = discovery.docker.all_containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    target_label  = "container"
+    regex         = "/(.*)"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_log_stream"]
+    target_label  = "stream"
+  }
+
+  rule {
+    replacement  = "{{ inventory_hostname }}"
+    target_label = "server"
+  }
+}
+
+// Docker 컨테이너 로그 수집
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.docker_containers.output
+  forward_to = [loki.write.default.receiver]
+}
+
+// 시스템 로그 수집
+loki.source.file "system" {
+  targets = [
+    {__path__ = "/var/log/syslog", job = "syslog", server = "{{ inventory_hostname }}"},
+  ]
+  forward_to = [loki.write.default.receiver]
+}
+
+// 중앙 Loki로 전송
+loki.write "default" {
+  endpoint {
+    url = "http://{{ hostvars[groups['monitoring'][0]]['ansible_host'] }}:3100/loki/api/v1/push"
+  }
+}

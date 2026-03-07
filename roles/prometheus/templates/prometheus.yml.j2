@@ -1,0 +1,52 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus 자기 자신 모니터링
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 모니터링 서버 시스템 메트릭 (같은 docker network → 컨테이너명으로 접근)
+  - job_name: 'node_monitoring'
+    static_configs:
+      - targets: ['node_exporter:9100']
+        labels:
+          server: 'monitoring'
+
+  # Spring Boot 서버 시스템 메트릭
+  - job_name: 'node_springboot'
+    static_configs:
+      - targets: ['{{ hostvars["springboot-server"]["ansible_host"] }}:9100']
+        labels:
+          server: 'springboot'
+
+  # FastAPI 서버 시스템 메트릭
+  - job_name: 'node_fastapi'
+    static_configs:
+      - targets: ['{{ hostvars["fastapi-server"]["ansible_host"] }}:9100']
+        labels:
+          server: 'fastapi'
+
+  # Stream(RabbitMQ) 서버 시스템 메트릭
+  - job_name: 'node_stream'
+    static_configs:
+      - targets: ['{{ hostvars["stream-server"]["ansible_host"] }}:9100']
+        labels:
+          server: 'stream'
+
+  # Spring Boot 애플리케이션 메트릭 (actuator/prometheus 노출 필요)
+  - job_name: 'app_springboot'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['{{ hostvars["springboot-server"]["ansible_host"] }}:8080']
+        labels:
+          server: 'springboot'
+
+  # FastAPI 애플리케이션 메트릭 (prometheus_fastapi_instrumentator 등 노출 필요)
+  - job_name: 'app_fastapi'
+    static_configs:
+      - targets: ['{{ hostvars["fastapi-server"]["ansible_host"] }}:8000']
+        labels:
+          server: 'fastapi'

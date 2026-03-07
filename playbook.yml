@@ -1,0 +1,17 @@
+---
+- name: Deploy Monitoring Stack
+  hosts: monitoring
+  become: yes
+  roles:
+    - docker
+    - loki
+    - prometheus
+    - grafana
+    - monitoring_stack
+
+- name: Deploy Monitoring Agents
+  hosts: app_servers
+  become: yes
+  roles:
+    - docker
+    - alloy

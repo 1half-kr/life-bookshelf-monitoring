@@ -1,0 +1,40 @@
+// 모니터링 서버 자신의 Docker 컨테이너 로그 수집
+discovery.docker "all_containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker_containers" {
+  targets = discovery.docker.all_containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    target_label  = "container"
+    regex         = "/(.*)"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_log_stream"]
+    target_label  = "stream"
+  }
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.docker_containers.output
+  forward_to = [loki.write.default.receiver]
+}
+
+// 시스템 로그 수집
+loki.source.file "system" {
+  targets = [
+    {__path__ = "/var/log/syslog", job = "syslog", server = "monitoring"},
+  ]
+  forward_to = [loki.write.default.receiver]
+}
+
+// Loki로 전송 (같은 docker-compose 네트워크 → 컨테이너명 사용)
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

@@ -1,0 +1,10 @@
+---
+- name: Create monitoring directory
+  file:
+    path: /opt/monitoring
+    state: directory
+
+- name: Copy Loki config
+  template:
+    src: loki-config.yml.j2
+    dest: /opt/monitoring/loki-config.yml

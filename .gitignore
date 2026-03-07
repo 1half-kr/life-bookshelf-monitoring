@@ -1,0 +1,5 @@
+# Ansible inventory (contains real IPs - generated from template)
+inventory/hosts.yml
+
+# SSH private keys
+*.pem

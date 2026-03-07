@@ -1,0 +1,5 @@
+---
+- name: Copy Grafana datasources
+  template:
+    src: datasources.yml.j2
+    dest: /opt/monitoring/datasources.yml

@@ -1,0 +1,15 @@
+---
+- name: Copy Alloy config for monitoring server
+  template:
+    src: config.alloy.j2
+    dest: /opt/monitoring/config.alloy
+
+- name: Copy docker-compose file
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/monitoring/docker-compose.yml
+
+- name: Start monitoring stack
+  command: docker compose up -d --remove-orphans
+  args:
+    chdir: /opt/monitoring

@@ -1,0 +1,20 @@
+---
+- name: Create Alloy directory
+  file:
+    path: /opt/alloy
+    state: directory
+
+- name: Copy Alloy config
+  template:
+    src: config.alloy.j2
+    dest: /opt/alloy/config.alloy
+
+- name: Copy docker-compose file
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/alloy/docker-compose.yml
+
+- name: Start Alloy
+  command: docker compose up -d --remove-orphans
+  args:
+    chdir: /opt/alloy

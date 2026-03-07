@@ -1,0 +1,36 @@
+# CI/CD에서는 이 파일을 기반으로 envsubst로 inventory/hosts.yml을 생성합니다.
+# 로컬 개발 시: 아래 환경변수를 설정하고 envsubst 실행
+#   export MONITORING_HOST=x.x.x.x MONITORING_SSH_KEY_PATH=~/.ssh/monitoring.pem
+#   export SERVER_HOST=x.x.x.x SERVER_SSH_KEY_PATH=~/.ssh/springboot.pem
+#   export AI_HOST=x.x.x.x    AI_SSH_KEY_PATH=~/.ssh/fastapi.pem
+#   export STREAM_HOST=x.x.x.x     STREAM_SSH_KEY_PATH=~/.ssh/stream.pem
+#   envsubst < inventory/hosts.yml.template > inventory/hosts.yml
+
+all:
+  children:
+    monitoring:
+      hosts:
+        monitoring-server:
+          ansible_host: ${MONITORING_HOST}
+          ansible_user: ubuntu
+          ansible_ssh_private_key_file: ${MONITORING_SSH_KEY_PATH}
+
+    app_servers:
+      hosts:
+        springboot-server:
+          ansible_host: ${SERVER_HOST}
+          ansible_user: ubuntu
+          ansible_ssh_private_key_file: ${SERVER_SSH_KEY_PATH}
+          service_type: springboot
+
+        fastapi-server:
+          ansible_host: ${AI_HOST}
+          ansible_user: ubuntu
+          ansible_ssh_private_key_file: ${AI_SSH_KEY_PATH}
+          service_type: fastapi
+
+        stream-server:
+          ansible_host: ${STREAM_HOST}
+          ansible_user: ubuntu
+          ansible_ssh_private_key_file: ${STREAM_SSH_KEY_PATH}
+          service_type: rabbitmq
