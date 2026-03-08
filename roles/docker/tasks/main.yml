@@ -5,7 +5,13 @@
   failed_when: false
   changed_when: false
 
-- name: Install Docker CE
+- name: Check if docker compose plugin is available
+  command: docker compose version
+  register: compose_check
+  failed_when: false
+  changed_when: false
+
+- name: Install Docker CE (Docker 미설치 시)
   when: docker_check.rc != 0
   block:
     - name: Remove conflicting legacy Docker packages
@@ -64,18 +70,51 @@
         state: present
         update_cache: yes
 
-- name: Check if docker compose plugin is available
-  command: docker compose version
-  register: compose_check
-  failed_when: false
-  changed_when: false
+- name: Add compose plugin only (Docker 설치됐지만 compose 없는 경우)
+  when: docker_check.rc == 0 and compose_check.rc != 0
+  block:
+    - name: Install prerequisites
+      apt:
+        name:
+          - ca-certificates
+          - curl
+        state: present
+        update_cache: yes
 
-- name: Install docker-compose-plugin if missing
-  apt:
-    name: docker-compose-plugin
-    state: present
-    update_cache: yes
-  when: compose_check.rc != 0
+    - name: Create Docker keyring directory
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Add Docker official GPG key
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+
+    - name: Get system architecture
+      command: dpkg --print-architecture
+      register: system_arch
+      changed_when: false
+
+    - name: Get Ubuntu codename
+      command: lsb_release -cs
+      register: ubuntu_codename
+      changed_when: false
+
+    - name: Add Docker official apt repository
+      apt_repository:
+        repo: "deb [arch={{ system_arch.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout }} stable"
+        state: present
+        filename: docker
+
+    - name: Install Docker Compose plugin
+      apt:
+        name:
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
 
 - name: Start Docker service
   systemd:
