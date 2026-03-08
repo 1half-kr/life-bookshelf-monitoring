@@ -1,0 +1,386 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "description": "Application log monitoring - error count & log viewer",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 10,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 10 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "title": "Total Errors (선택 기간)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "expr": "sum(count_over_time({server=~\"$server\"} |~ \"(?i)(error|exception|fatal)\" [$__range]))",
+          "legendFormat": "",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "orange", "value": 5 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "title": "Total Warnings (선택 기간)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "expr": "sum(count_over_time({server=~\"$server\"} |~ \"(?i)(warn)\" [$__range]))",
+          "legendFormat": "",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "title": "Total Log Lines (선택 기간)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "expr": "sum(count_over_time({server=~\"$server\"} [$__range]))",
+          "legendFormat": "",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 11,
+      "panels": [],
+      "title": "Error Trends",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "normal" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 80 }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "^error.*" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": "^warn.*" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": "^info.*" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#5794F2", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 6 },
+      "id": 4,
+      "options": {
+        "legend": { "calcs": ["sum", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "title": "시간대별 로그 레벨 분포",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "expr": "sum by(server) (count_over_time({server=~\"$server\"} |~ \"(?i)(error|exception|fatal)\" [$__interval]))",
+          "legendFormat": "error - {{server}}",
+          "queryType": "range",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "expr": "sum by(server) (count_over_time({server=~\"$server\"} |~ \"(?i)warn\" [$__interval]))",
+          "legendFormat": "warn - {{server}}",
+          "queryType": "range",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "expr": "sum by(server) (count_over_time({server=~\"$server\"} |~ \"(?i)info\" [$__interval]))",
+          "legendFormat": "info - {{server}}",
+          "queryType": "range",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "id": 12,
+      "panels": [],
+      "title": "Log Viewer",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 16, "w": 24, "x": 0, "y": 15 },
+      "id": 5,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showControls": true,
+        "showLabels": true,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "title": "Application Logs",
+      "type": "logs",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "expr": "{server=~\"$server\", container=~\"$container\"}",
+          "legendFormat": "",
+          "maxLines": 500,
+          "queryType": "range",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 31 },
+      "id": 13,
+      "panels": [],
+      "title": "Error Details",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 14, "w": 12, "x": 0, "y": 32 },
+      "id": 6,
+      "options": {
+        "dedupStrategy": "signature",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": true,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "title": "Error / Exception Logs",
+      "type": "logs",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "expr": "{server=~\"$server\", container=~\"$container\"} |~ \"(?i)(error|exception|fatal)\"",
+          "legendFormat": "",
+          "maxLines": 200,
+          "queryType": "range",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 14, "w": 12, "x": 12, "y": 32 },
+      "id": 7,
+      "options": {
+        "dedupStrategy": "signature",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": true,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "title": "Warn Logs",
+      "type": "logs",
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+          "expr": "{server=~\"$server\", container=~\"$container\"} |~ \"(?i)warn\"",
+          "legendFormat": "",
+          "maxLines": 200,
+          "queryType": "range",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": ["logs", "loki", "application"],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "allValue": ".+",
+        "multi": true,
+        "name": "server",
+        "options": [],
+        "query": {
+          "label": "server",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query",
+        "label": "Server"
+      },
+      {
+        "current": {},
+        "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "allValue": ".+",
+        "multi": true,
+        "name": "container",
+        "options": [],
+        "query": {
+          "label": "container",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "{server=~\"$server\"}",
+          "type": 1
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query",
+        "label": "Container"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Application Logs",
+  "uid": "app-logs-dashboard",
+  "version": 5
+}
