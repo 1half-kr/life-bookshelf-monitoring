@@ -57,7 +57,7 @@ scrape_configs:
       module: [http_2xx]
     static_configs:
       - targets:
-          - 'http://{{ hostvars["springboot-server"]["ansible_host"] }}:8080/health'
+          - 'http://{{ hostvars["springboot-server"]["ansible_host"] }}:8080/actuator/health'
           - 'http://{{ hostvars["fastapi-server"]["ansible_host"] }}:3000/health'
     relabel_configs:
       - source_labels: [__address__]
