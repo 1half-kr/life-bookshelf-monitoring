@@ -15,9 +15,9 @@ jobs:
       - name: Setup SSH keys
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.MONITORING_SSH_KEY }}" > ~/.ssh/monitoring_key
-          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/server_key
-          echo "${{ secrets.AI_SSH_KEY }}" > ~/.ssh/ai_key
+          printf '%s\n' "${{ secrets.MONITORING_SSH_KEY }}" > ~/.ssh/monitoring_key
+          printf '%s\n' "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/server_key
+          printf '%s\n' "${{ secrets.AI_SSH_KEY }}" > ~/.ssh/ai_key
           chmod 600 ~/.ssh/monitoring_key ~/.ssh/server_key ~/.ssh/ai_key
 
       # IP/키 경로를 Secrets에서 읽어 inventory 동적 생성
